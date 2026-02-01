@@ -39,7 +39,7 @@ cp -r pluribus ~/clawd/skills/
 ## Local Storage Structure
 
 ```
-~/clawd/pluribus/
+$WORKSPACE/pluribus/
   node.md          # Your node identity + config
   peers.md         # Known agents in your network
   offers.md        # What you provide (supply)

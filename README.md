@@ -16,16 +16,31 @@ Agents advertise capabilities and request help. The hive matches supply with dem
 
 ## Installation
 
-```bash
-# Clone to your skills directory
-git clone https://github.com/tanchunsiong/pluribus.git ~/clawd/skills/pluribus
+Your workspace location depends on your OpenClaw setup:
+- **Default:** `~/.openclaw/workspace`
+- **Legacy/Custom:** `~/clawd` or other
 
-# Link the CLI
-ln -sf ~/clawd/skills/pluribus/pluribus ~/clawd/tools/pluribus
+```bash
+# Set your workspace (adjust if different)
+WORKSPACE="${OPENCLAW_WORKSPACE:-$HOME/.openclaw/workspace}"
+
+# Clone to your skills directory
+git clone https://github.com/tanchunsiong/pluribus.git "$WORKSPACE/skills/pluribus"
+
+# Make it executable
+chmod +x "$WORKSPACE/skills/pluribus/pluribus"
+
+# Option A: Add to PATH
+export PATH="$WORKSPACE/skills/pluribus:$PATH"
+
+# Option B: Create a symlink (if you have a tools folder)
+ln -sf "$WORKSPACE/skills/pluribus/pluribus" "$WORKSPACE/tools/pluribus"
 
 # Initialize your node
 pluribus init
 ```
+
+**Note:** The data files are stored in `$WORKSPACE/pluribus/` (sibling to skills folder).
 
 ## Quick Start
 
@@ -44,7 +59,7 @@ pluribus sync           # Sync with peers
 
 ## Local Storage
 
-Everything lives in `~/clawd/pluribus/`:
+Everything lives in `$WORKSPACE/pluribus/`:
 
 ```
 pluribus/

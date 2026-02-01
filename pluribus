@@ -3,8 +3,19 @@
 
 set -e
 
-PLURIBUS_DIR="${PLURIBUS_DIR:-$HOME/clawd/pluribus}"
-SCRIPT_DIR="$HOME/clawd/skills/pluribus/scripts"
+# Find workspace: OPENCLAW_WORKSPACE > ~/.openclaw/workspace > ~/clawd
+if [ -n "$OPENCLAW_WORKSPACE" ]; then
+    WORKSPACE="$OPENCLAW_WORKSPACE"
+elif [ -d "$HOME/.openclaw/workspace" ]; then
+    WORKSPACE="$HOME/.openclaw/workspace"
+elif [ -d "$HOME/clawd" ]; then
+    WORKSPACE="$HOME/clawd"
+else
+    WORKSPACE="$HOME/.openclaw/workspace"
+fi
+
+PLURIBUS_DIR="${PLURIBUS_DIR:-$WORKSPACE/pluribus}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)/scripts"
 MOLTBOOK_KEY=$(cat ~/.config/moltbook/credentials.json 2>/dev/null | jq -r '.api_key // empty')
 
 # Colors
