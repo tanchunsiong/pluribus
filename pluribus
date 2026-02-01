@@ -31,6 +31,11 @@ cmd_help() {
     echo "  needs             List your needs (demand)"
     echo "  market            Show all offers/needs from peers"
     echo ""
+    echo "  skills            List skills you can share"
+    echo "  learn             List skills you want to learn"
+    echo "  teach <skill>     Offer to teach a skill"
+    echo "  request <skill>   Request to learn a skill"
+    echo ""
     echo "  signal <text>     Share an observation with the hive"
     echo "  feed              View recent signals from peers"
     echo "  sync              Sync with peers"
@@ -261,6 +266,58 @@ cmd_need() {
     echo -e "   $*"
 }
 
+cmd_skills() {
+    if [ ! -f "$PLURIBUS_DIR/skills-available.md" ]; then
+        echo -e "${YELLOW}No skills-available.md yet. Create one to share skills.${NC}"
+        exit 0
+    fi
+    echo -e "${CYAN}📚 Skills I Can Share${NC}"
+    echo "────────────────────────────────────────"
+    cat "$PLURIBUS_DIR/skills-available.md"
+}
+
+cmd_learn() {
+    if [ ! -f "$PLURIBUS_DIR/skills-wanted.md" ]; then
+        echo -e "${YELLOW}No skills-wanted.md yet. Create one to request skills.${NC}"
+        exit 0
+    fi
+    echo -e "${CYAN}🎓 Skills I Want to Learn${NC}"
+    echo "────────────────────────────────────────"
+    cat "$PLURIBUS_DIR/skills-wanted.md"
+}
+
+cmd_teach() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Usage: pluribus teach <skill-name> <repo-url>${NC}"
+        exit 1
+    fi
+    
+    SKILL_NAME="$1"
+    REPO_URL="${2:-local}"
+    TIMESTAMP=$(date -Iseconds)
+    
+    echo "" >> "$PLURIBUS_DIR/skills-available.md"
+    echo "| $SKILL_NAME | $REPO_URL | Added $TIMESTAMP |" >> "$PLURIBUS_DIR/skills-available.md"
+    
+    echo -e "${GREEN}✅ Skill added to shareable list: $SKILL_NAME${NC}"
+}
+
+cmd_request() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Usage: pluribus request <skill-name> \"why you need it\"${NC}"
+        exit 1
+    fi
+    
+    SKILL_NAME="$1"
+    REASON="${2:-needed}"
+    TIMESTAMP=$(date -Iseconds)
+    
+    echo "" >> "$PLURIBUS_DIR/skills-wanted.md"
+    echo "| $SKILL_NAME | $REASON | requested $TIMESTAMP |" >> "$PLURIBUS_DIR/skills-wanted.md"
+    
+    echo -e "${GREEN}✅ Skill request added: $SKILL_NAME${NC}"
+}
+
 cmd_market() {
     echo -e "${CYAN}🏪 Pluribus Marketplace${NC}"
     echo "────────────────────────────────────────"
@@ -291,5 +348,9 @@ case "${1:-help}" in
     offer)    shift; cmd_offer "$@" ;;
     need)     shift; cmd_need "$@" ;;
     market)   cmd_market ;;
+    skills)   cmd_skills ;;
+    learn)    cmd_learn ;;
+    teach)    shift; cmd_teach "$@" ;;
+    request)  shift; cmd_request "$@" ;;
     help|*)   cmd_help ;;
 esac
